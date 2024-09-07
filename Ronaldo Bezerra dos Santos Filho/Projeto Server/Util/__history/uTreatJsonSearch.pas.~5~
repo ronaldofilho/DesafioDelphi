@@ -1,0 +1,34 @@
+﻿unit uTreatJsonSearch;
+
+interface
+uses System.JSON;
+type
+  TTreatJsonSearch = class
+  private
+    FoJson: TJSONObject;
+  public
+    class function New: TTreatJsonSearch;
+    function SetJson(AsJson: TJSONObject): TTreatJsonSearch;
+    function ValidJson: boolean;
+  end;
+
+implementation
+
+{ TTreatJsonSearch }
+
+class function TTreatJsonSearch.New: TTreatJsonSearch;
+begin
+  result := TTreatJsonSearch.create;
+end;
+
+function TTreatJsonSearch.SetJson(AsJson: TJSONObject): TTreatJsonSearch;
+begin
+  FoJson := AsJson;
+end;
+
+function TTreatJsonSearch.ValidJson: boolean;
+begin
+
+end;
+
+end.

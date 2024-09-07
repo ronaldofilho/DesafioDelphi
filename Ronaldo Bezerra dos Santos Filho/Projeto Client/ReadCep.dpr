@@ -1,0 +1,17 @@
+program ReadCep;
+
+uses
+  Vcl.Forms,
+  unPrincipal in 'View\unPrincipal.pas' {Form1},
+  uCEPController in 'Controller\uCEPController.pas',
+  uCepModel in 'Models\uCepModel.pas',
+  uTreatJsonSearch in 'Util\uTreatJsonSearch.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+end.

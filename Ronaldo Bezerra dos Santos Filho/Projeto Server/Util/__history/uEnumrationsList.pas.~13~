@@ -1,0 +1,41 @@
+﻿unit uEnumrationsList;
+
+interface
+uses SysUtils;
+type
+  ETipoSite = (etsViaCep, etsApiCep, etsAwesome);
+
+  TSiteConsulta = class
+  public
+  const
+    _ksViaCep = 'http://viacep.com.br/ws/%s/json/';
+    _ksApiCep = 'https://cdn.apicep.com/file/apicep/%s.json';
+    _ksAwesomeApi = 'https://cep.awesomeapi.com.br/json/%s';
+
+    class function GetUrlSite(const AsCep: string; AeTipoSite: ETipoSite): string;
+    class function GetSiteName(AeTipoSite: ETipoSite): string;
+    class function GetListSiteConsulta
+  end;
+
+implementation
+
+{ TSiteConsulta }
+class function TSiteConsulta.GetUrlSite(const AsCep: string; AeTipoSite: ETipoSite): string;
+begin
+  case AeTipoSite of
+    etsViaCep: Format(_ksViaCep, [AsCep]);
+    etsApiCep: Format(_ksApiCep, [AsCep]);
+    etsAwesome: Format(_ksAwesomeApi, [AsCep]);
+  end;
+end;
+
+class function TSiteConsulta.GetSiteName(AeTipoSite: ETipoSite): string;
+begin
+  case AeTipoSite of
+    etsViaCep: result := 'ViaCep';
+    etsApiCep: result := 'ApiCep';
+    etsAwesome: result := 'AwesomeApi';
+  end;
+end;
+
+end.

@@ -1,0 +1,72 @@
+unit uCEPController;
+
+interface
+uses Horse, uCEPGenerics, REST.Client, uEnumrationsList, SysUtils;
+
+type
+  TCEPController = class
+    public
+    class function New: TCEPController;
+    procedure Registry;
+
+    private
+    procedure GetCep(AoRequest: THorseRequest; AoResponse: THorseResponse);
+    function CepSearch(const AeCep: string; AeTipoSite: ETipoSite): string;
+  end;
+
+implementation
+
+{ TCEPController }
+
+procedure TCEPController.GetCep(AoRequest: THorseRequest; AoResponse: THorseResponse);
+var
+  FsCep: string;
+begin
+  FsCep := AoRequest.Params['CEP'];
+end;
+
+class function TCEPController.New: TCEPController;
+begin
+  result := TCEPController.Create;
+end;
+
+procedure TCEPController.Registry;
+begin
+  THorse.Get('/cep/:cep', GetCep);
+end;
+
+function TCEPController.CepSearch(const AeCep: string; AeTipoSite: ETipoSite): string;
+var
+  oRestClient: TRestClient;
+  oRestRequest: TRESTRequest;
+  oRestResponse: TRestResponse;
+begin
+  result := '';
+  oRestClient := TRESTClient.Create(nil);
+  oRestRequest := TRESTRequest.Create(nil);
+  oRestResponse := TRESTResponse.Create(nil);
+  try
+    try
+      Writeln('Consultando CEP '+AeCep+' em - '+TSiteConsulta.GetSiteName(AeTipoSite));
+      oRestRequest.Client := oRestClient;
+      oRestRequest.Response := OrestResponse;
+      oRestRequest.Client.BaseURL := TSiteConsulta.GetUrlSite(AeCep, AeTipoSite);
+      oRestRequest.Execute;
+    except on E: Exception do
+      begin
+        Writeln(TSiteConsulta.GetSiteName(AeTipoSite)+' - Error=');
+        Writeln('-> '+E.message);
+        oRestClient.Destroy;
+        oRestRequest.Destroy;
+        oRestResponse.Destroy;
+      end;
+    end;
+  finally
+    result := oRestResponse.JSONValue.ToString;
+    oRestClient.Destroy;
+    oRestRequest.Destroy;
+    oRestResponse.Destroy;
+  end;
+end;
+
+end.

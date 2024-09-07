@@ -1,0 +1,105 @@
+unit uCEPGenerics;
+
+interface
+uses System.JSON, uEnumrationsList, Rtti, SysUtils;
+type
+  TCEPGenerics = class
+  private
+    FsCep: string;
+    FsLogradouro: string;
+    FsComplemento: string;
+    FsUf: string;
+    FsBairro: string;
+    FsDdd: string;
+    FsIbge: string;
+    FsJson: string;
+    FsCidade: string;
+    FeSiteType: ESiteType;
+
+
+  public
+    class function New: TCEPGenerics; virtual; abstract;
+    function SetJson(AeJson: string): TCEPGenerics; virtual;
+    function TreatJson: TCEPGenerics; virtual;
+    function SetSiteType(AeSiteType: ESiteType): TCEPGenerics; virtual;
+    function ToJson: string; virtual;
+
+  published
+    property Cep: string read FsCep write FsCep;
+    property Logradouro: string read FsLogradouro write FsLogradouro;
+    property Complemento: string read FsComplemento write FsComplemento;
+    property Uf: string read FsUf write FsUf;
+    property Bairro: string read Fsbairro write Fsbairro;
+    property Ddd: string read FsDdd write FsDdd;
+    property Ibge: string read FsIbge write FsIbge;
+    property Cidade: string read FsCidade write FsCidade;
+    property Json: string read FsJson;
+    property SiteType: ESiteType read FeSiteType;
+  end;
+
+implementation
+
+{ TCEPGenerics }
+
+function TCEPGenerics.SetJson(AeJson: string): TCEPGenerics;
+begin
+  FsJson := AeJson
+end;
+
+function TCEPGenerics.SetSiteType(AeSiteType: ESiteType): TCEPGenerics;
+begin
+  FeSiteType := AeSiteType;
+end;
+
+function TCEPGenerics.ToJson: string;
+var
+  oJsonObject: TJSONObject;
+  oRttiContext: TRttiContext;
+  oRttiType: TRttiType;
+  oRttiProperty: TRttiProperty;
+begin
+  oJsonObject := TJSONObject.Create;
+  oRttiContext := TRttiContext.Create;
+  oRttiType := oRttiContext.GetType(Self.ClassInfo);
+
+  for oRttiProperty in oRttiType.GetProperties do
+  begin
+    with oJsonObject do
+      if (oRttiProperty.Name.Upper) <> 'json' then
+      begin
+        AddPair(oRttiProperty.Name, oRttiProperty.GetValue(Pointer(Self)).ToString);
+      end;
+  end;
+  result := oJsonObject.ToString;
+  oJsonObject.Free;
+end;
+
+function TCEPGenerics.TreatJson: TCEPGenerics;
+var
+  oJsonValue: TJSONValue;
+  sAux: string;
+begin
+  result := Self;
+  oJsonValue := TJSONObject.ParseJSONValue(Json);
+  with oJsonValue do
+  begin
+    if TryGetValue<string>(TFieldsViaCep.getField(SiteType, EFieldsCep.efCep), sAux) then
+      Cep := sAux;
+    if TryGetValue<string>(TFieldsViaCep.getField(SiteType, EFieldsCep.efComplemento), sAux) then
+      Complemento := sAux;
+    if TryGetValue<string>(TFieldsViaCep.getField(SiteType, EFieldsCep.efLogradouro), sAux) then
+      Logradouro := sAux;
+    if TryGetValue<string>(TFieldsViaCep.getField(SiteType, EFieldsCep.efBairro), sAux) then
+      Bairro := sAux;
+    if TryGetValue<string>(TFieldsViaCep.getField(SiteType, EFieldsCep.efUf), sAux) then
+      Uf := sAux;
+    if TryGetValue<string>(TFieldsViaCep.getField(SiteType, EFieldsCep.efDdd), sAux) then
+      Ddd := sAux;
+    if TryGetValue<string>(TFieldsViaCep.getField(SiteType, EFieldsCep.efIbge), sAux) then
+      Ibge := sAux;
+    if TryGetValue<string>(TFieldsViaCep.getField(SiteType, EFieldsCep.efCidade), sAux) then
+      Cidade := sAux;
+  end;
+end;
+
+end.

@@ -1,0 +1,23 @@
+unit uCEPViaCep;
+
+interface
+uses uCEPGenerics, System.JSON, uEnumrationsList;
+
+type
+  TViaCepModel = class(TCEPGenerics)
+
+  public
+    function New: TCEPGenerics;
+  end;
+
+implementation
+
+{ TViaCepModel }
+
+function TViaCepModel.New: TCEPGenerics;
+begin
+  result := TViaCepModel.create;
+  SetSiteType(ESiteType.etsViaCep);
+end;
+
+end.

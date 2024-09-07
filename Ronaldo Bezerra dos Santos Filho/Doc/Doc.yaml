@@ -1,0 +1,75 @@
+openapi: 3.0.3
+info:
+  title: GetCep 1.0
+  description: |-
+    O projeto consiste em uma aplicação de consumo de APIs responsáveis por fornecerem consulta de endereços pelo CEPs, as APIs em questão são:
+    
+    https://viacep.com.br/,  
+    
+    https://apicep.com/api-de-consulta/, 
+    
+    https://docs.awesomeapi.com.br/api-cep
+  contact:
+    email: ronaldobezerra.filho@gmail.com
+  version: "1.0"
+servers:
+  - url: http://localhost:8899
+tags:
+  - name: cep
+    description: Consulta de endereço por CEP
+paths:
+  /cep/{cep}:
+    get:
+      tags:
+        - cep
+      summary: Localizar endereço pelo CEP
+      description: Localizar endereço pelo CEP
+      operationId: cep
+      parameters: 
+        - in: path
+          name: cep
+          required: true
+          schema:
+            type: string
+            minimum: 9
+            description: CEP que deseja usar para localização do endereço
+      responses:
+        '200':
+          description: CEP Localizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        cep:
+          type: string
+          example: 63010010
+        logradouro:
+          type: string
+          example: Rua São Pedro
+        complmento:
+          type: string
+          example: até 1198\/1199
+        uf:
+          type: string
+          example: CE
+        bairro:
+          type: string
+          example: Centro
+        ddd:
+          type: string
+          example: 88
+        ibge:
+          type: string
+          example: 2307304
+        cidade:
+          type: string
+          example: Juazeiro do Norte
+      xml:
+        name: order
+    

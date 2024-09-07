@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2024/09/06 18:44:20.000.512,=C:\Users\ronal\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2024/09/06 18:45:04.000.108,D:\Projetos\Delphi\Ronaldo Bezerra dos Santos Filho\Projeto Client\ReadCep.dproj=C:\Users\ronal\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2024/09/06 18:45:10.000.036,=D:\Projetos\Delphi\Ronaldo Bezerra dos Santos Filho\Projeto Client\unPrincipal.pas</Transaction>
+    <Transaction>2024/09/06 18:47:14.000.106,=D:\Projetos\Delphi\Ronaldo Bezerra dos Santos Filho\Projeto Client\Unit1.pas</Transaction>
+    <Transaction>2024/09/06 18:47:39.000.066,D:\Projetos\Delphi\Ronaldo Bezerra dos Santos Filho\Projeto Client\Unit1.pas=D:\Projetos\Delphi\Ronaldo Bezerra dos Santos Filho\Projeto Client\Controller\uCEPController.pas</Transaction>
+    <Transaction>2024/09/06 18:50:45.000.982,=D:\Projetos\Delphi\Ronaldo Bezerra dos Santos Filho\Projeto Client\Unit1.pas</Transaction>
+    <Transaction>2024/09/06 18:50:59.000.219,D:\Projetos\Delphi\Ronaldo Bezerra dos Santos Filho\Projeto Client\Unit1.pas=D:\Projetos\Delphi\Ronaldo Bezerra dos Santos Filho\Projeto Client\Models\uCepModel.pas</Transaction>
+    <Transaction>2024/09/06 21:03:29.052,=D:\Projetos\Delphi\Ronaldo Bezerra dos Santos Filho\Projeto Client\Util\uTreatJsonSearch.pas</Transaction>
+  </Transactions>
+</BorlandProject>

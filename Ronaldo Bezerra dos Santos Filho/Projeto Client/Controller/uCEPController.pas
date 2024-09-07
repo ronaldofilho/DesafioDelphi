@@ -1,0 +1,73 @@
+unit uCEPController;
+
+interface
+uses uCepModel, REST.Client, SysUtils, uTreatJsonSearch, System.JSON;
+type
+  TCepController = class
+  private
+    FsCep: string;
+    FsJson: string;
+  public
+    class function New: TCepController;
+    function SetCep(AsCep: string): TCepController;
+    function SearchCep(var AbError: Boolean): TCepController;
+    function GetModel: TCepModel;
+  end;
+
+implementation
+
+{ TCepController }
+
+function TCepController.GetModel: TCepModel;
+begin
+  result := TCepModel.New
+                     .SetJson(FsJson)
+                     .TreatJson;
+end;
+
+class function TCepController.New: TCepController;
+begin
+  result := TCepController.Create;
+end;
+
+function TCepController.SearchCep(var AbError: Boolean): TCepController;
+var
+  oRestClient: TRestClient;
+  oRestRequest: TRESTRequest;
+  oRestResponse: TRestResponse;
+begin
+  Result := Self;
+  oRestClient := TRESTClient.Create(nil);
+  oRestRequest := TRESTRequest.Create(nil);
+  oRestResponse := TRESTResponse.Create(nil);
+  try
+    try
+      oRestRequest.Client := oRestClient;
+      oRestRequest.Response := oRestResponse;
+      oRestRequest.Client.BaseURL := 'http://localhost:8899/cep/'+FsCep;
+      oRestRequest.Execute;
+    except on E: Exception do
+      begin
+        oRestClient.Destroy;
+        oRestRequest.Destroy;
+        oRestResponse.Destroy;
+      end;
+    end;
+  finally
+    if TTreatJsonSearch.New.SetJson(oRestResponse.JSONValue as TJSONObject).InvalidJson then
+      AbError := true;
+
+    FsJson := oRestResponse.JSONValue.ToString;
+    oRestClient.Destroy;
+    oRestRequest.Destroy;
+    oRestResponse.Destroy;
+  end;
+end;
+
+function TCepController.SetCep(AsCep: string): TCepController;
+begin
+  result := Self;
+  FsCep := AsCep;
+end;
+
+end.

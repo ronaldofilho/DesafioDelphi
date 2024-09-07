@@ -1,0 +1,102 @@
+﻿unit uCEPController;
+
+interface
+uses Horse, uCEPGenerics, REST.Client, uEnumrationsList, SysUtils, uCEPViaCep;
+
+type
+  TCEPController = class
+    public
+    class function New: TCEPController;
+    procedure Registry;
+
+    private
+    procedure GetCep(AoRequest: THorseRequest; AoResponse: THorseResponse);
+    function CepSearch(const AeCep: string; AeTipoSite: ESiteType; var AsStatus: integer): string;
+    function ReturnCep(const AeCep: string): string;
+  end;
+
+implementation
+
+{ TCEPController }
+
+procedure TCEPController.GetCep(AoRequest: THorseRequest; AoResponse: THorseResponse);
+var
+  FsCep: string;
+begin
+  FsCep := AoRequest.Params['CEP'];
+  AoResponse.Send(ReturnCep(fsCep));
+end;
+
+class function TCEPController.New: TCEPController;
+begin
+  result := TCEPController.Create;
+end;
+
+procedure TCEPController.Registry;
+begin
+  THorse.Get('/cep/:cep', GetCep);
+end;
+
+procedure TCEPController.ExecCepSearche(const AsCep: string; AeSiteType: ; var AsStatus: string)
+begin
+  result := TViaCepModel.new
+                      .SetJson(CepSearch(AeCep, AeSiteType, sStatus))
+                      .TreatJson
+                      .ToJson;
+end;
+
+function TCEPController.ReturnCep(const AeCep: string): string;
+var
+  eSiteType: ESiteType;
+  sStatus: integer;
+begin
+  result := '';
+  sStatus := 200;
+  for eSiteType in TSearchSite.GetListSearchSite do
+  begin
+    if sStatus = 200 then
+    begin
+
+
+      exit;
+    end;
+  end;
+end;
+
+function TCEPController.CepSearch(const AeCep: string; AeTipoSite: ESiteType; var AsStatus: integer): string;
+var
+  oRestClient: TRestClient;
+  oRestRequest: TRESTRequest;
+  oRestResponse: TRestResponse;
+begin
+  result := '';
+  oRestClient := TRESTClient.Create(nil);
+  oRestRequest := TRESTRequest.Create(nil);
+  oRestResponse := TRESTResponse.Create(nil);
+  try
+    try
+      Writeln('Consultando CEP '+AeCep+' em - '+TSearchSite.GetSiteName(AeTipoSite));
+      oRestRequest.Client := oRestClient;
+      oRestRequest.Response := OrestResponse;
+      oRestRequest.Client.BaseURL := TSearchSite.GetUrlSite(AeCep, AeTipoSite);
+      oRestRequest.Execute;
+    except on E: Exception do
+      begin
+        AsStatus := oRestResponse.StatusCode;
+        Writeln(TSearchSite.GetSiteName(AeTipoSite)+' - Error=');
+        Writeln('-> '+E.message);
+        oRestClient.Destroy;
+        oRestRequest.Destroy;
+        oRestResponse.Destroy;
+      end;
+    end;
+  finally
+    AsStatus := oRestResponse.StatusCode;
+    result := oRestResponse.JSONValue.ToString;
+    oRestClient.Destroy;
+    oRestRequest.Destroy;
+    oRestResponse.Destroy;
+  end;
+end;
+
+end.

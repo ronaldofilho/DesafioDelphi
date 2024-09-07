@@ -1,0 +1,95 @@
+unit unPrincipal;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.JSON, REST.Client, uCEPController, uCepModel,
+  Rtti, System.UITypes;
+
+type
+  TForm1 = class(TForm)
+    edtCep: TEdit;
+    lblCep: TLabel;
+    edtComplemento: TEdit;
+    lblComplemento: TLabel;
+    edtLogradouro: TEdit;
+    lblLogradouro: TLabel;
+    edtBairro: TEdit;
+    lblBairro: TLabel;
+    edtCidade: TEdit;
+    lblCidade: TLabel;
+    edtDdd: TEdit;
+    lblDdd: TLabel;
+    edtUf: TEdit;
+    lblUf: TLabel;
+    edtIbge: TEdit;
+    lblIbge: TLabel;
+    procedure edtCepKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCepChange(Sender: TObject);
+  private
+    procedure MontDataOnForm(AoCepModel: TCepModel);
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.edtCepChange(Sender: TObject);
+var
+  bError: Boolean;
+begin
+  if (Length(edtCep.Text) = 8) then
+  begin
+    MontDataOnForm(TCepController.New
+                                 .SetCep(edtcep.Text)
+                                 .SearchCep(bError)
+                                 .GetModel);
+    if bError then
+    begin
+      MessageDlg('CEP não localizado', TMsgDlgType.mtError, mbOKCancel,0);
+      bError := false;
+    end;
+  end
+end;
+
+procedure TForm1.edtCepKeyPress(Sender: TObject; var Key: Char);
+begin
+  if (not (Key in ['0'..'9'])) and (Key <> #8) then
+  begin
+    key := #0;
+  end;
+end;
+
+procedure TForm1.MontDataOnForm(AoCepModel: TCepModel);
+const
+  _ksPropertPre = 'edt';
+var
+  oRttiContext: TRttiContext;
+  oRttiType: TRttiType;
+  oRttiProperty: TRttiProperty;
+  oComponent: TComponent;
+begin
+  oRttiContext := TRttiContext.Create;
+  oRttiType := oRttiContext.GetType(AoCepModel.ClassInfo);
+
+  for oRttiProperty in oRttiType.GetProperties do
+  begin
+    if ((UpperCase(oRttiProperty.Name) <> 'JSON')
+    and (UpperCase(oRttiProperty.Name) <> 'SITETYPE')
+    and (UpperCase(oRttiProperty.Name) <> 'CEP')) then
+    begin
+      oComponent := Self.FindComponent(_ksPropertPre+oRttiProperty.Name);
+      if (oComponent <> nil) and (oComponent is TEdit) then
+        (oComponent as TEdit).Text := oRttiProperty.GetValue(Pointer(AoCepModel)).ToString;
+    end;
+  end;
+end;
+
+end.

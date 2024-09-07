@@ -1,0 +1,38 @@
+unit uCEPViaCep;
+
+interface
+uses uCEPGenerics, System.JSON, uEnumrationsList;
+
+type
+  TViaCepModel = class(TCEPGenerics)
+  private
+    function TreatJson: TViaCepModel;
+
+  public
+    function New: TCEPGenerics;
+  end;
+
+implementation
+
+{ TViaCepModel }
+
+function TViaCepModel.New: TCEPGenerics;
+begin
+  result := TViaCepModel.create;
+end;
+
+function TViaCepModel.TreatJson: TViaCepModel;
+var
+  oJsonObject: TJSONValue;
+  sAux: string;
+begin
+  result := nil;
+  oJsonObject := TJSONObject.ParseJSONValue(Json) as TJSONObject;
+  with oJsonObject do
+  begin
+    if TryGetValue('',sAux) then
+      Cep := sAux
+  end;
+end;
+
+end.
